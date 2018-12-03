@@ -1,0 +1,16 @@
+<player>
+    <hp>100</hp>
+    <level>10</level>
+    <xp>40</xp>
+    <equipped>
+        <helmet defense="5">Leather Helmet</helmet>
+    </equipped>
+    <spells>
+        <spell name="fire">Fireball</spell>
+        <spell name="heal">Heal</spell>
+    </spells>
+    <items>
+        <item amount="5">Healing Potion</item>
+    </items>
+    <location x="2" y="4">maps/test.map</location>
+</player>
