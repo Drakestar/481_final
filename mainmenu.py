@@ -104,8 +104,6 @@ class MainMenu(pygame.Surface):
             self.control_alpha -= 10
             self.screen.blit(self.controls, (0, 0))
 
-
-
     @staticmethod
     def make_button(surface, color, text_color, x, y, width, height, text):
         pygame.draw.rect(surface, (0, 0, 0), (x - 1, y - 1, width + 2, height + 2), 1)  # makes outline around the box

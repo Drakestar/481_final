@@ -30,5 +30,9 @@ REJECT = 6
 GAME_MENU = 7
 SYSTEM_MENU = 8
 
+enemies = ["flan", "ghoast", "sasquash", "slider", "spaghyetti"]
+
+fight_options = ["Fight", "Spell", "Item", "Flee"]
+
 keyboard_dict = {pygame.K_LEFT: 1, pygame.K_RIGHT: 2, pygame.K_UP: 3, pygame.K_DOWN: 4, pygame.K_z: 5, pygame.K_x: 6,
                  pygame.K_c: 7, pygame.K_ESCAPE: 8}

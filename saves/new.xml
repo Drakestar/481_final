@@ -1,16 +1,17 @@
 <player>
     <hp>100</hp>
+    <mp>50</mp>
     <level>10</level>
     <xp>40</xp>
     <equipped>
         <helmet defense="5">Leather Helmet</helmet>
     </equipped>
     <spells>
-        <spell name="fire">Fireball</spell>
-        <spell name="heal">Heal</spell>
+        <spell type="damage" target="aoe" cost="5" amount="10">Fireball</spell>
+        <spell type="heal" target="ally" cost="10" amount="20">Heal</spell>
     </spells>
     <items>
-        <item amount="5">Healing Potion</item>
+        <item amount="5" type="heal" target="ally" heal="10">Healing Potion</item>
     </items>
-    <location x="2" y="4">maps/test.map</location>
+    <location x="3" y="3">maps/test.map</location>
 </player>

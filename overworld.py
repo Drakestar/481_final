@@ -1,65 +1,85 @@
 import maphandler
 import joystick
+import random
+import combat
+import xml.etree.ElementTree as ET
+import player_class
 from constants import *
 
 
 class OverworldScreen(pygame.Surface):
 
-    def __init__(self, surface, loadgame="new"):
+    def __init__(self, surface, loadgame="saves/new.xml"):
         self.screen = surface
-        self.player_loc = [1, 1]
         self.player_dir = 3
-        self.map = maphandler.Map("maps/test.map")
+        self.is_fighting = False
+        self.fight_chance = 0
+        self.player = self.loadplayer(loadgame)
+        self.player_loc = self.player.coords
+        self.map = maphandler.Map(self.player.map)
         self.forward = pygame.image.load("player_sprites/forward.png")
         self.back = pygame.image.load("player_sprites/back.png")
         self.left = pygame.image.load("player_sprites/left.png")
         self.right = pygame.image.load("player_sprites/right.png")
 
+    # Main gameplay loop
     def run(self):
+        # Set clock for fps
         clock = pygame.time.Clock()
         while True:
+            # Reset any possible action
             action = 0
+            # Go through any actions taken by the user
             for event in pygame.event.get():
-                # Handle pressing the 'X' in the top-right to close the program
-                if event.type == pygame.QUIT:
-                    pygame.display.quit()
-                    pygame.quit()
+                # Key events
                 if event.type == pygame.KEYDOWN:
+                    # Alt+F4 = quitting
                     if event.key == pygame.K_F4 and bool(event.mod & pygame.KMOD_ALT):
                         pygame.display.quit()
                         pygame.quit()
+                    # Handle actual controls
                     if event.key in keyboard_dict.keys():
                         action = keyboard_dict[event.key]
+                # Handle any joystick actions over the keyboard actions
                 else:
                     action = joystick.joystick_handler()
-
+            # If there is a fight
+            if self.is_fighting:
+                self.is_fighting = False
+                fight = combat.Combat(self.screen, self.player)
+                self.player = fight.run()
             # Draw world
             self.draw()
-            # Draw conversations
-            # Draw menu
+
             self.input_handler(action)
             pygame.display.flip()
             clock.tick(60)
 
+    # Draw call to draw the world
     def draw(self):
+        # Fill any background
         self.screen.fill(MENU_GRAY)
+        # Get width and height of overall screen for printing the tiles to screen
         w, h = pygame.display.get_surface().get_size()
         pic_size = self.map.map[0][0].name.get_width()
         w = (w - pic_size) / 2
         h = (h - pic_size) / 2
-        # Just in case although it should never come up
-        # Draw base map
+        # Loop through tiles
         for y, row in enumerate(self.map.map):
             for x, col in enumerate(row):
+                # Print whatever the tiles name is
                 self.screen.blit(col.name, ((x - self.player_loc[0]) * pic_size + w, (y - self.player_loc[1]) * pic_size + h))
+                # For things other than an npc could easily do between a-z or A-Z to coincide with any special things on
+                # a tile
                 if col.type == "a":
                     self.screen.blit(col.char,
                                      ((x - self.player_loc[0]) * pic_size + w, (y - self.player_loc[1]) * pic_size + h))
 
-        # Draw things on map
+        # Draw player on map with their direction
         player = self.direction_handler()
         self.screen.blit(player, (w, h))
 
+    # Checks which direction the player should be facing
     def direction_handler(self):
         if self.player_dir == 0:
             return self.back
@@ -70,10 +90,13 @@ class OverworldScreen(pygame.Surface):
         elif self.player_dir == 3:
             return self.right
 
+    # Handles input and determines whether a fight will start
     def input_handler(self, player_input):
+        # Create new temp location for checking whether a new location will work
         tmp_X = self.player_loc[1]
         tmp_Y = self.player_loc[0]
         if player_input in (UP, LEFT, DOWN, RIGHT):
+            # Basically a switch statement that changes direction regardless of actual movement
             if player_input == UP:
                 tmp_X -= 1
                 self.player_dir = 0
@@ -86,8 +109,16 @@ class OverworldScreen(pygame.Surface):
             elif player_input == RIGHT:
                 tmp_Y += 1
                 self.player_dir = 3
+            # The player was able to actually move so do stuff
             if self.map.map[tmp_X][tmp_Y].type == ".":
+                # Set the players new location
                 self.player_loc = [tmp_Y, tmp_X]
+                # Calculate whether they end up in a fight
+                if random.random() <= self.fight_chance:
+                    self.fight_chance = 0
+                    self.is_fighting = True
+                else:
+                    self.fight_chance += .025
             elif self.map.map[tmp_X][tmp_Y].type == "1":
                 newX, newY = self.map.map[tmp_X][tmp_Y].newcords.split(",")
                 self.player_loc = [int(newY), int(newX)]
@@ -95,5 +126,23 @@ class OverworldScreen(pygame.Surface):
                 self.map = maphandler.Map(tmp)
 
         elif player_input == ACCEPT:
-            print("temp")
+            pass
 
+    def loadplayer(self, load_name):
+        tmp = player_class.Player()
+        tree = ET.parse(load_name)
+        root = tree.getroot()
+        tmp.hp = int(root[0].text)
+        tmp.mp = int(root[1].text)
+        tmp.level = int(root[2].text)
+        tmp.xp = int(root[3].text)
+        for equipment in root[4]:
+            tmp.equip(equipment.text, equipment.attrib)
+        for spells in root[5]:
+            tmp.make_spell(spells.text, spells.attrib)
+        for items in root[6]:
+            tmp.get_item(items.text, items.attrib)
+        print(root[7].text)
+        tmp.map = root[7].text
+        tmp.coords = [int(root[7].attrib['x']), int(root[7].attrib['y'])]
+        return tmp
