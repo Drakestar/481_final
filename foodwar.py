@@ -4,6 +4,7 @@ import overworld
 import os
 
 if __name__ == "__main__":
+    # Use
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 0)
     # Initialize the pygame library
     pygame.init()
@@ -17,15 +18,7 @@ if __name__ == "__main__":
     # Initialize the joysticks
     pygame.joystick.init()
 
-    p_current = P_TITLESCREEN
-    playing = True
-    filler = MENU_GRAY
     current_surface = mainmenu.MainMenu(screen)
     load = current_surface.run()
     current_surface = overworld.OverworldScreen(screen, load)
-    #current_surface = overworld.OverworldScreen(screen)
     current_surface.run()
-
-
-pygame.joystick.quit()
-pygame.quit()

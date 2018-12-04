@@ -50,7 +50,6 @@ class OverworldScreen(pygame.Surface):
                 self.player = fight.run()
             # Draw world
             self.draw()
-
             self.input_handler(action)
             pygame.display.flip()
             clock.tick(60)
@@ -128,11 +127,12 @@ class OverworldScreen(pygame.Surface):
         elif player_input == ACCEPT:
             self.saveplayer()
 
+    # Load and save player should probably be in the player class, but it would be a simple move and I don't care enough
     def loadplayer(self, load_name):
         tmp = player_class.Player()
         tree = ET.parse(load_name)
         root = tree.getroot()
-        tmp.maphp = int(root[0].text)
+        tmp.maxhp = int(root[0].text)
         tmp.hp = int(root[1].text)
         tmp.maxmp = int(root[2].text)
         tmp.mp = int(root[3].text)
@@ -148,6 +148,7 @@ class OverworldScreen(pygame.Surface):
         tmp.coords = [int(root[9].attrib['x']), int(root[9].attrib['y'])]
         return tmp
 
+    # Unlike the load, There would technically need to be a loop for subelementing the equipment, spells and items
     def saveplayer(self):
         root = ET.Element("player")
         ET.SubElement(root, "maxhp").text = str(self.player.maxhp)

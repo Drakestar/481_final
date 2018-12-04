@@ -1,7 +1,6 @@
 import constants
 import pygame
 import random
-import player_class
 import enemy_class
 import joystick
 

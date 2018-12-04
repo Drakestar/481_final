@@ -1,8 +1,9 @@
 import pygame
 import random
 
-class Enemy:
 
+class Enemy:
+    # Kept it nice and simple, could have had enemy information in a file then load them into these values, but eh
     def __init__(self, name):
         self.name = name
         self.image = pygame.image.load("enemy_sprites/" + name + ".png")

@@ -2,6 +2,7 @@ import pygame
 
 
 class Tile:
+    # The tile has various information about itself like what square it's equivalent too and it's image is loaded
     def __init__(self, type):
         self.type = type
 
@@ -20,10 +21,10 @@ class Tile:
                 self.goes_to = ""
 
 
-
 class Map:
     def __init__(self, mapname):
-        self.mapname =  mapname
+        # Mapname is used to save players location
+        self.mapname = mapname
         self.map = []
         file = open(mapname, "r")
         portion = 0
@@ -62,7 +63,3 @@ class Map:
             for col in row:
                 col.secondary_init(terrain_type, tmp_dict, self.tileset)
                 self.map[x][y].secondary_init(terrain_type, tmp_dict, self.tileset)
-
-                # Y, X
-
-

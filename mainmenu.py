@@ -29,14 +29,16 @@ class MainMenu(pygame.Surface):
     def run(self):
         self.firstDraw()
         clock = pygame.time.Clock()
+        # While the player is making a choice
         while self.playing:
             action = 0
             for event in pygame.event.get():
-                # Handle pressing the 'X' in the top-right to close the program
+                # Handle pressing the 'X' in the top-right to close the program, can't happen cause fullscreen
                 if event.type == pygame.QUIT:
                     pygame.display.quit()
                     pygame.quit()
                 if event.type == pygame.KEYDOWN:
+                    # Handle alt f4 and then other controls
                     if event.key == pygame.K_F4 and bool(event.mod & pygame.KMOD_ALT):
                         pygame.display.quit()
                         pygame.quit()
@@ -52,6 +54,7 @@ class MainMenu(pygame.Surface):
         return self.load
 
     def firstDraw(self):
+        # Draws the company logo and a control schema
         self.screen.blit(self.logo, (0, 0))
         pygame.display.flip()
         time.sleep(2)
@@ -67,6 +70,7 @@ class MainMenu(pygame.Surface):
         time.sleep(2)
 
     def input_handler(self, player_input):
+        # Moves the pointer up and down then menu and handles when 'A'/'Z' is pressed
         if player_input == UP:
             self.pointer -= 1
             if self.pointer < 0:
@@ -77,14 +81,22 @@ class MainMenu(pygame.Surface):
                 self.pointer = 0
         elif player_input == ACCEPT:
             self.input_menu_picked()
+        elif player_input == SYSTEM_MENU:
+            pygame.quit()
 
     def input_menu_picked(self):
+        # Handles picking the various menu options
+        # New Game
+        # Load Game
+        # Quit
         if self.pointer == 0:
             self.playing = False
         elif self.pointer == 1:
+            # Could replace the static old.xml with a call to open a file, but whatever"
             self.load = "saves/old.xml"
             self.playing = False
         elif self.pointer == 2:
+            # It's the quit option
             pygame.display.quit()
             pygame.quit()
 
@@ -108,19 +120,23 @@ class MainMenu(pygame.Surface):
 
     @staticmethod
     def make_button(surface, color, text_color, x, y, width, height, text):
+        # Packaged way of making a box with text in it
         pygame.draw.rect(surface, (0, 0, 0), (x - 1, y - 1, width + 2, height + 2), 1)  # makes outline around the box
         pygame.draw.rect(surface, color, (x, y, width, height))  # makes the box
-        myfont = pygame.font.SysFont('Arial Black', 15)  # creates the font, size 15 (you can change this)
+        myfont = pygame.font.SysFont('Arial Black', 15)  # creates the font
         label = myfont.render(text, 1, text_color)  # creates the label
         surface.blit(label, (x + 2, y))  # renders the label
 
     def get_midpoint(self, width):
+        # Gets an x value that puts the image in the middle regardless of size
         return (self.screen.get_width() - width) / 2
 
     def draw_menu_pointer(self):
+        # Draw the menu pointer using an index of which menu pointer it's on
         self.screen.blit(self.pointer_png, (self.get_midpoint(175), 296 + self.pointer * 30))
 
     def draw_food(self, food_pic, food_index):
+        # Draws the food that flavours the main menu
         self.screen.blit(food_pic, (self.get_midpoint(food_pic.get_size()[0]), self.food_ys[food_index]))
         if self.food_ys[food_index] > self.screen.get_height():
             self.food_ys[food_index] = -food_pic.get_size()[1] + 10
