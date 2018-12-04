@@ -23,6 +23,7 @@ class Tile:
 
 class Map:
     def __init__(self, mapname):
+        self.mapname =  mapname
         self.map = []
         file = open(mapname, "r")
         portion = 0

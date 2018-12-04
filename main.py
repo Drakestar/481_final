@@ -20,10 +20,10 @@ if __name__ == "__main__":
     p_current = P_TITLESCREEN
     playing = True
     filler = MENU_GRAY
-    #current_surface = mainmenu.MainMenu(screen)
-    #load = current_surface.run()
-    #current_surface = overworld.OverworldScreen(screen, load)
-    current_surface = overworld.OverworldScreen(screen)
+    current_surface = mainmenu.MainMenu(screen)
+    load = current_surface.run()
+    current_surface = overworld.OverworldScreen(screen, load)
+    #current_surface = overworld.OverworldScreen(screen)
     current_surface.run()
 
 

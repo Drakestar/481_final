@@ -8,7 +8,7 @@ class MainMenu(pygame.Surface):
     def __init__(self, surface):
         size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
         self.screen = surface
-        self.load = ""
+        self.load = "saves/new.xml"
         self.playing = True
         self.title = pygame.image.load('menu_sprites/title_screen.png')
         self.logo = pygame.image.load('menu_sprites/logo.png')
@@ -49,6 +49,7 @@ class MainMenu(pygame.Surface):
             self.input_handler(action)
             pygame.display.flip()
             clock.tick(60)
+        return self.load
 
     def firstDraw(self):
         self.screen.blit(self.logo, (0, 0))
@@ -69,7 +70,7 @@ class MainMenu(pygame.Surface):
         if player_input == UP:
             self.pointer -= 1
             if self.pointer < 0:
-                self.pointer = 3
+                self.pointer = len(self.menu_items) - 1
         elif player_input == DOWN:
             self.pointer += 1
             if self.pointer > len(self.menu_items) - 1:
@@ -81,7 +82,8 @@ class MainMenu(pygame.Surface):
         if self.pointer == 0:
             self.playing = False
         elif self.pointer == 1:
-            print("load game")
+            self.load = "saves/old.xml"
+            self.playing = False
         elif self.pointer == 2:
             pygame.display.quit()
             pygame.quit()

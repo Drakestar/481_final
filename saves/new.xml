@@ -1,5 +1,7 @@
 <player>
+    <maxhp>100</maxhp>
     <hp>100</hp>
+    <maxmp>50</maxmp>
     <mp>50</mp>
     <level>10</level>
     <xp>0</xp>

@@ -126,23 +126,43 @@ class OverworldScreen(pygame.Surface):
                 self.map = maphandler.Map(tmp)
 
         elif player_input == ACCEPT:
-            pass
+            self.saveplayer()
 
     def loadplayer(self, load_name):
         tmp = player_class.Player()
         tree = ET.parse(load_name)
         root = tree.getroot()
-        tmp.hp = int(root[0].text)
-        tmp.mp = int(root[1].text)
-        tmp.level = int(root[2].text)
-        tmp.xp = int(root[3].text)
-        for equipment in root[4]:
+        tmp.maphp = int(root[0].text)
+        tmp.hp = int(root[1].text)
+        tmp.maxmp = int(root[2].text)
+        tmp.mp = int(root[3].text)
+        tmp.level = int(root[4].text)
+        tmp.xp = int(root[5].text)
+        for equipment in root[6]:
             tmp.equip(equipment.text, equipment.attrib)
-        for spells in root[5]:
+        for spells in root[7]:
             tmp.make_spell(spells.text, spells.attrib)
-        for items in root[6]:
+        for items in root[8]:
             tmp.get_item(items.text, items.attrib)
-        print(root[7].text)
-        tmp.map = root[7].text
-        tmp.coords = [int(root[7].attrib['x']), int(root[7].attrib['y'])]
+        tmp.map = root[9].text
+        tmp.coords = [int(root[9].attrib['x']), int(root[9].attrib['y'])]
         return tmp
+
+    def saveplayer(self):
+        root = ET.Element("player")
+        ET.SubElement(root, "maxhp").text = str(self.player.maxhp)
+        ET.SubElement(root, "hp").text = str(self.player.hp)
+        ET.SubElement(root, "maxmp").text = str(self.player.maxmp)
+        ET.SubElement(root, "mp").text = str(self.player.mp)
+        ET.SubElement(root, "level").text = str(self.player.level)
+        ET.SubElement(root, "xp").text = str(self.player.xp)
+        equipment = ET.SubElement(root, "equipped")
+        ET.SubElement(equipment, "helmet", defense="5").text = list(self.player.equipment.keys())[0]
+        spells = ET.SubElement(root, "spells")
+        ET.SubElement(spells, "spell", type="damage", target="aoe", cost="5", amount="10").text = "Fireball"
+        ET.SubElement(spells, "spell", type="heal", target="ally", cost="10", amount="20").text = "Heal"
+        items = ET.SubElement(root, "items")
+        ET.SubElement(items, "item", amount="5", type="heal", target="ally", heal="10").text = "Healing Potion"
+        ET.SubElement(root, "location", x=str(self.player_loc[0]), y=str(self.player_loc[1])).text = self.map.mapname
+        tree = ET.ElementTree(root)
+        tree.write("saves/old.xml")
