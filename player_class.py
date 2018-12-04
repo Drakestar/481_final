@@ -3,6 +3,7 @@ import random
 
 class Player:
     def __init__(self):
+        self.maxhp = 100
         self.hp = 100
         self.mp = 50
         self.level = 1
@@ -45,6 +46,14 @@ class Player:
     def use_item(self):
         print(self.items)
         self.hp += int(self.items['Healing Potion']['amount'])
+
+    def get_xp(self, amount):
+        self.xp += amount
+        if self.xp >= 100:
+            self.level += 1
+            self.xp = 0
+            self.maxhp += 10
+            self.hp = self.maxhp
 
 class Spell:
     def __init__(self, dictionary):

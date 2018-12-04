@@ -2,7 +2,7 @@
     <hp>100</hp>
     <mp>50</mp>
     <level>10</level>
-    <xp>40</xp>
+    <xp>0</xp>
     <equipped>
         <helmet defense="5">Leather Helmet</helmet>
     </equipped>

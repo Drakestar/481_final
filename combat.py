@@ -24,7 +24,7 @@ class Combat(pygame.Surface):
         self.pointer_image = pygame.image.load("player_sprites/pointer.png")
         self.pointer_image = pygame.transform.smoothscale(self.pointer_image, (int(self.pointer_image.get_width() / 2), int(self.pointer_image.get_height() / 2)))
         # Come up with enemies
-        for x in range(1, random.randint(1, 4)):
+        for x in range(1, random.randint(2, 4)):
             self.enemy_list.append(enemy_class.Enemy(random.choice(constants.enemies)))
 
     def run(self):
@@ -72,12 +72,15 @@ class Combat(pygame.Surface):
         # Draw enemies
         for index, enemy in enumerate(self.enemy_list):
             self.screen.blit(enemy.image, (self.screen.get_height() * (index + 1) / len(self.enemy_list), self.screen.get_height() / 4))
-            self.draw_menu_item("HP: " + str(enemy.hp), (self.screen.get_height() * (index + 1) / len(self.enemy_list), self.screen.get_height() / 4))
+            self.draw_menu_item("HP: " + str(enemy.hp), (self.screen.get_height() * (index + 1) / len(self.enemy_list), self.screen.get_height() / 4 - self.fontsize))
         # Draw/write menu options
         for index, option in enumerate(constants.fight_options):
             self.draw_menu_item(option, [300, (self.screen.get_height() * 5 / 7) + index * (self.fontsize + 30)])
         self.draw_menu_item("HP: " + str(self.player.hp), [50, (self.screen.get_height() * 5 / 7) + 0 * (self.fontsize + 30)])
         self.draw_menu_item("MP: " + str(self.player.mp), [50, (self.screen.get_height() * 5 / 7) + 1 * (self.fontsize + 30)])
+        self.draw_menu_item("Lvl:" + str(self.player.level), [50, (self.screen.get_height() * 5 / 7) + 2 * (self.fontsize + 30)])
+        self.draw_menu_item("XP:" + str(self.player.xp), [50, (self.screen.get_height() * 5 / 7) + 3 * (self.fontsize + 30)])
+
         # Draw pointer
         self.screen.blit(pygame.transform.rotate(self.pointer_image, 90), [220, (self.screen.get_height() * 5 / 7) + self.action_choice * (self.fontsize + 30) - int(self.pointer_image.get_width() / 4)])
         # Draw fight selector if applicable
@@ -132,6 +135,10 @@ class Combat(pygame.Surface):
         elif input == constants.ACCEPT:
             self.selection_picker()
             self.selecting = False
+            for enemy in self.enemy_list:
+                self.player.hp -= enemy.attack()
+                if self.player.hp <= 0:
+                    pygame.QUIT()
         elif input == constants.REJECT:
             self.selecting = False
 
@@ -139,6 +146,8 @@ class Combat(pygame.Surface):
         self.enemy_list[self.selection_choice].take_damage(self.player.attack())
         if self.enemy_list[self.selection_choice].hp <= 0:
             self.enemy_list.pop(self.selection_choice)
+            print(self.player.xp)
+            self.player.get_xp(random.randint(10, 15))
         if len(self.enemy_list) - 1 < self.selection_choice:
             self.selection_choice -= 1
 
@@ -153,6 +162,10 @@ class Combat(pygame.Surface):
                 self.sub_choice = 0
         elif input == constants.ACCEPT:
             self.submenu_picker()
+            for enemy in self.enemy_list:
+                self.player.hp -= enemy.attack()
+                if self.player.hp <= 0:
+                    pygame.QUIT()
             self.in_submenu = False
         elif input == constants.REJECT:
             self.in_submenu = False
@@ -167,6 +180,8 @@ class Combat(pygame.Surface):
                     if enemy.hp <= 0:
                         removables.append(enemy)
                 for enemy in removables:
+                    print(self.player.xp)
+                    self.player.get_xp(random.randint(10, 15))
                     self.enemy_list.remove(enemy)
         else:
             self.player.use_item()
