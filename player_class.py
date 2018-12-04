@@ -5,6 +5,7 @@ class Player:
     def __init__(self):
         self.maxhp = 100
         self.hp = 100
+        self.maxmp = 50
         self.mp = 50
         self.level = 1
         self.xp = 50
@@ -24,7 +25,7 @@ class Player:
         self.spells[name] = Spell(dictionary)
 
     def attack(self):
-        return random.randrange(self.strength, self.strength * self.level)
+        return random.randrange(self.level, self.strength + self.level)
 
     def take_hit(self, damage):
         self.hp -= (damage - self.defense)
@@ -54,6 +55,9 @@ class Player:
             self.xp = 0
             self.maxhp += 10
             self.hp = self.maxhp
+            self.maxmp += 5
+            self.mp = self.maxmp
+            self.strength += 1
 
 class Spell:
     def __init__(self, dictionary):

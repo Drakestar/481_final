@@ -73,6 +73,7 @@ class Combat(pygame.Surface):
         for index, enemy in enumerate(self.enemy_list):
             self.screen.blit(enemy.image, (self.screen.get_height() * (index + 1) / len(self.enemy_list), self.screen.get_height() / 4))
             self.draw_menu_item("HP: " + str(enemy.hp), (self.screen.get_height() * (index + 1) / len(self.enemy_list), self.screen.get_height() / 4 - self.fontsize))
+            self.draw_menu_item(enemy.name, (self.screen.get_height() * (index + 1) / len(self.enemy_list), self.screen.get_height() / 4 + enemy.image.get_height()))
         # Draw/write menu options
         for index, option in enumerate(constants.fight_options):
             self.draw_menu_item(option, [300, (self.screen.get_height() * 5 / 7) + index * (self.fontsize + 30)])
